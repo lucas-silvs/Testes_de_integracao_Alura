@@ -30,21 +30,24 @@ class UsuarioDaoTest {
 
 
     @Test
-    void BuscarUsuarioPorUserNameQueExisteEDeveRetornarOUsuario() {
-
-
-
+    void buscarUsuarioPorUserNameQueExisteEDeveRetornarOUsuario() {
         Usuario usuario = criarUsuario();
-
-
         Usuario response = usuarioDao.buscarPorUsername(usuario.getNome());
         assertNotNull(response);
     }
 
     @Test
-    void BuscarUsuarioPorUserNameQueNaoExisteEDeveRetornarNull() {
+    void buscarUsuarioPorUserNameQueNaoExisteEDeveRetornarNull() {
 
         assertThrows(NoResultException.class,() -> usuarioDao.buscarPorUsername("fulano"));
+    }
+
+    @Test
+    void deletarUsuarioQueExisteNaBase() {
+
+        Usuario usuario = criarUsuario();
+        usuarioDao.deletar(usuario);
+        assertThrows(NoResultException.class,() -> usuarioDao.buscarPorUsername(usuario.getNome()));
     }
 
     private Usuario criarUsuario(){
