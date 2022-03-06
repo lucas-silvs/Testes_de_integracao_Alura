@@ -2,6 +2,7 @@ package br.com.alura.leilao.dao;
 
 import br.com.alura.leilao.model.Usuario;
 import br.com.alura.leilao.util.JPAUtil;
+import br.com.alura.leilao.util.UsuarioBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,13 @@ class UsuarioDaoTest {
 
     @Test
     void buscarUsuarioPorUserNameQueExisteEDeveRetornarOUsuario() {
-        Usuario usuario = criarUsuario();
+        Usuario usuario = new UsuarioBuilder()
+                .comNome("fulano")
+                .comEmail("fulano@email.com")
+                .comSenha("senha123")
+                .build();
+
+        entityManager.persist(usuario);
         Usuario response = usuarioDao.buscarPorUsername(usuario.getNome());
         assertNotNull(response);
     }
@@ -45,16 +52,16 @@ class UsuarioDaoTest {
     @Test
     void deletarUsuarioQueExisteNaBase() {
 
-        Usuario usuario = criarUsuario();
+        Usuario usuario = new UsuarioBuilder()
+                .comNome("fulano")
+                .comEmail("fulano@email.com")
+                .comSenha("senha123")
+                .build();
+
+        entityManager.persist(usuario);
         usuarioDao.deletar(usuario);
         assertThrows(NoResultException.class,() -> usuarioDao.buscarPorUsername(usuario.getNome()));
     }
 
-    private Usuario criarUsuario(){
-        Usuario usuario = new Usuario("fulano", "fulano@email.com", "senha123");
-        entityManager.persist(usuario);
-        return usuario;
-
-    }
 
 }

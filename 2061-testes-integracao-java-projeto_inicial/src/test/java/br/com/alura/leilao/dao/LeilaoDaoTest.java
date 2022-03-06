@@ -3,6 +3,8 @@ package br.com.alura.leilao.dao;
 import br.com.alura.leilao.model.Leilao;
 import br.com.alura.leilao.model.Usuario;
 import br.com.alura.leilao.util.JPAUtil;
+import br.com.alura.leilao.util.LeilaoBuilder;
+import br.com.alura.leilao.util.UsuarioBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,8 +34,22 @@ public class LeilaoDaoTest {
 
     @Test
     void salvarNovoLeilao(){
-        Usuario usuario = criarUsuario();
-        Leilao leilao = criarLeilao(usuario);
+        Usuario usuario = new UsuarioBuilder()
+                .comNome("fulano")
+                .comEmail("fulano@email.com")
+                .comSenha("senha123")
+                .build();
+
+        entityManager.persist(usuario);
+
+        Leilao leilao = new LeilaoBuilder()
+                .comNome("leilão Teste")
+                .comValorInicial(new BigDecimal("1234"))
+                .comData(LocalDate.now())
+                .comUsuario(usuario)
+                .build();
+        leilao = leilaoDao.salvar(leilao);
+
         Leilao salvo = leilaoDao.buscarPorId(leilao.getId());
         assertEquals(leilao.getNome(),salvo.getNome());
         assertEquals(leilao.getDataAbertura(),salvo.getDataAbertura());
@@ -43,8 +59,22 @@ public class LeilaoDaoTest {
 
     @Test
     void atualizarLeilaoExistente(){
-        Usuario usuario = criarUsuario();
-        Leilao leilao = criarLeilao(usuario);
+        Usuario usuario = new UsuarioBuilder()
+                .comNome("fulano")
+                .comEmail("fulano@email.com")
+                .comSenha("senha123")
+                .build();
+
+        entityManager.persist(usuario);
+
+        Leilao leilao = new LeilaoBuilder()
+                .comNome("leilão Teste")
+                .comValorInicial(new BigDecimal("1234"))
+                .comData(LocalDate.now())
+                .comUsuario(usuario)
+                .build();
+        leilao = leilaoDao.salvar(leilao);
+
         leilao.setNome("novo nome do leilão");
         leilao = leilaoDao.salvar(leilao);
         Leilao salvo = leilaoDao.buscarPorId(leilao.getId());
@@ -53,17 +83,5 @@ public class LeilaoDaoTest {
 
     }
 
-    private Leilao criarLeilao(Usuario usuario) {
-        Leilao leilao = new Leilao("leilão Teste", new BigDecimal("1234"), LocalDate.now(), usuario);
-        leilao = leilaoDao.salvar(leilao);
-        return leilao;
-    }
-
-    private Usuario criarUsuario(){
-        Usuario usuario = new Usuario("fulano", "fulano@email.com", "senha123");
-        entityManager.persist(usuario);
-        return usuario;
-
-    }
-
+    
 }
